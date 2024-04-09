@@ -36,7 +36,7 @@ function heuristic(_x1,_y1,_x2,_y2){
 	return abs(_x2 - _x1) + abs(_y2 - _y1);
 }
 
-function a_stars(_grid,_xstart,_ystart,_xend,_yend){
+function a_stars_find_path(_grid,_xstart,_ystart,_xend,_yend){
 	
 	if(!is_struct(_grid)) return false;
 	
@@ -47,7 +47,7 @@ function a_stars(_grid,_xstart,_ystart,_xend,_yend){
 	_yend = _yend div CELL_SIZE;
 	
 	if(_grid.get_cell(_xend,_yend) == 1){
-		show_debug_message("Não posso ir até um obstáculo");
+		show_debug_message("I can't go to an obstacle");
 		return false;
 	}
 	
@@ -72,16 +72,16 @@ function a_stars(_grid,_xstart,_ystart,_xend,_yend){
 		array_push(_closed_list,_cur_node);
 		
 		if(_cur_node.x == _xend and _cur_node.y == _yend){
-			var _path = get_path(_cur_node);
-			show_debug_message("Caminho encontrado com sucesso!");
+			var _path = a_stars_get_path(_cur_node);
+			show_debug_message("Path found successfully!");
 			return _path;
 		}
 		
 		var _neighbors = [[0,1],[1,0],[0,-1],[-1,0]];
 		
 		for(var _i = 0; _i < array_length(_neighbors); _i++){
-			var _neighbor_x = _cur_node.x + _neighbors[_i][0];
-			var _neighbor_y = _cur_node.y + _neighbors[_i][1];
+			var _neighbor_x = _cur_node.x + _neighbors[_i,0];
+			var _neighbor_y = _cur_node.y + _neighbors[_i,1];
 			
 			if(_neighbor_x < 0 or _neighbor_x >= _grid.grid_width or _neighbor_y < 0 or _neighbor_y >= _grid.grid_height) continue;
 
@@ -120,12 +120,31 @@ function a_stars(_grid,_xstart,_ystart,_xend,_yend){
 		
 	}
 	
-	show_debug_message("Não foi possível encontrar o caminho!");
+	show_debug_message("Couldn't find the way!");
 	return false;
 	
 }
 
-function get_path(_end_node){
+function a_stars_follow_path(_grid,_xstart,_ystart,_xend,_yend,_path){
+	var _a_path = a_stars_find_path(_grid,_xstart,_ystart,_xend,_yend);
+	if(_a_path != false){
+		path_clear_points(_path);
+		for(var _i = 0; _i < array_length(_a_path); _i++){
+			var _point_x = _a_path[_i,0] * CELL_SIZE + (CELL_SIZE / 2);
+			var _point_y = _a_path[_i,1] * CELL_SIZE + (CELL_SIZE / 2);
+			path_add_point(_path,_point_x,_point_y,200);
+		}
+	
+		path_insert_point(_path,0,x,y,200);
+		path_set_closed(_path,0);
+	
+		if(path_exists(_path)){
+			path_start(_path,1,path_action_stop,false);
+		}
+	}
+}
+
+function a_stars_get_path(_end_node){
 	var _path = [];
 	var _cur_node = _end_node;
 	
@@ -135,4 +154,29 @@ function get_path(_end_node){
 	}
 	
 	return _path;
+}
+
+function a_stars_set_obstacles(_grid,_obstacle){
+	if(!is_struct(_grid)) return false;
+	var _grid_width = _grid.grid_width;
+	var _grid_height = _grid.grid_height;
+	for(var _x = 0; _x < _grid_width; _x++){
+		for(var _y = 0; _y < _grid_height; _y++){
+			var _pos = position_meeting(_x * CELL_SIZE, _y * CELL_SIZE,_obstacle);
+			if(_pos) _grid.set_cell(_x,_y,1);
+		}
+	}
+}
+
+function a_stars_draw_grid(_grid){
+	if(!DEBUG_MODE) return false;
+	if(!is_struct(_grid)) return false;
+	draw_set_font(fnt_debug);
+	for(var _x = 0; _x < grid_width; _x++){
+		for(var _y = 0; _y < grid_height; _y++){
+			var _pos = grid_map.get_cell(_x,_y);
+			draw_text(_x * CELL_SIZE + 8, _y * CELL_SIZE + 8, string(_pos));
+		}
+	}
+	draw_set_font(-1);
 }

@@ -77,7 +77,7 @@ function a_stars_find_path(_grid,_xstart,_ystart,_xend,_yend){
 			return _path;
 		}
 		
-		var _neighbors = [[0,1],[1,0],[0,-1],[-1,0]];
+		var _neighbors = [[0,1],[1,0],[0,-1],[-1,0],[1,1],[-1,-1]];
 		
 		for(var _i = 0; _i < array_length(_neighbors); _i++){
 			var _neighbor_x = _cur_node.x + _neighbors[_i,0];

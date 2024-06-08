@@ -1,7 +1,7 @@
 {
   "resourceType": "GMObject",
   "resourceVersion": "1.0",
-  "name": "obj_view_manager",
+  "name": "obj_window_manager",
   "spriteId": null,
   "solid": false,
   "visible": true,

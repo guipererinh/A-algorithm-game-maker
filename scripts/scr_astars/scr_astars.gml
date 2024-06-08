@@ -4,11 +4,15 @@ function Grid(_grid_width,_grid_height,_val) constructor{
 	val = _val;
 	grid_arr = [];
 	
-	for(var _x = 0; _x < grid_width; _x++){
-		for(var _y = 0; _y < grid_height; _y++){
-			grid_arr[_x,_y] = val;
+	static init = function(){
+		for(var _x = 0; _x < grid_width; _x++){
+			for(var _y = 0; _y < grid_height; _y++){
+				grid_arr[_x,_y] = val;
+			}
 		}
 	}
+	
+	init();
 	
 	static get_cell = function(_x,_y){
 		if(_x < 0 or _x >= grid_width) return;
@@ -59,14 +63,7 @@ function a_stars_find_path(_grid,_xstart,_ystart,_xend,_yend){
 	
 	while(array_length(_open_list) > 0){
 		
-		var _cur_index = 0;
-		
-		for(var _i = 0; _i < array_length(_open_list); _i++){
-			if(_open_list[_i].f_cost < _open_list[_cur_index].f_cost){
-				_cur_index = _i;
-			}
-		}
-		
+		var _cur_index = a_stars_get_lower_f_cost(_open_list);
 		var _cur_node = _open_list[_cur_index];
 		array_delete(_open_list,_cur_index,1);
 		array_push(_closed_list,_cur_node);
@@ -123,6 +120,16 @@ function a_stars_find_path(_grid,_xstart,_ystart,_xend,_yend){
 	show_debug_message("Couldn't find the way!");
 	return false;
 	
+}
+
+function a_stars_get_lower_f_cost(_open_list){
+	var _cur_index = 0;
+	for(var _i = 0; _i < array_length(_open_list); _i++){
+		if(_open_list[_i].f_cost < _open_list[_cur_index].f_cost){
+			_cur_index = _i;
+		}
+	}
+	return _cur_index;
 }
 
 function a_stars_follow_path(_grid,_xstart,_ystart,_xend,_yend,_path){

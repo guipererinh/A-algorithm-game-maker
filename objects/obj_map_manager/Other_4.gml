@@ -1,1 +1,0 @@
-a_stars_set_obstacles(grid_map,obj_wall);

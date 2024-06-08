@@ -1,1 +1,1 @@
-a_stars_follow_path(obj_map_manager.grid_map,x,y,mouse_x,mouse_y,path);
+a_stars_follow_path(obj_a_stars_manager.grid_map,x,y,mouse_x,mouse_y,path);
